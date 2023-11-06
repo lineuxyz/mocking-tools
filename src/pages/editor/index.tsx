@@ -15,11 +15,10 @@ export default function JsonEditor() {
 
   const isValidJson = (jsonString: string) => {
     try {
-      console.log(JSON.parse(jsonString));
       JSON.parse(jsonString);
-      return true; // A string é um JSON válido
+      return true;
     } catch (error) {
-      throw error; // A string não é um JSON válido
+      throw error;
     }
   };
 
