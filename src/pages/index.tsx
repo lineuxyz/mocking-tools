@@ -1,19 +1,54 @@
+import { useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Footer from "~/components/Footer";
 import Header from "~/components/Header";
+import Typed from "typed.js";
 
 export default function Home() {
+  const el = useRef<HTMLSpanElement>(null);
+  const typed = useRef<Typed | null>(null);
+
+  useEffect(() => {
+    const strings = [
+      "Mocka suas aplicações",
+      "Constrói suas aplicações",
+      "Testa suas aplicações",
+    ];
+
+    const formattedStrings = strings.map((s) =>
+      s.replace(
+        /Mocka|Constrói|Testa/g,
+        (match) =>
+          `<span class="relative whitespace-nowrap text-[#8B63FF]"><span class="relative">${match}</span></span>`
+      )
+    );
+
+    const options = {
+      strings: formattedStrings,
+      typeSpeed: 80,
+      backSpeed: 40,
+      loop: true,
+    };
+
+    typed.current = new Typed(el.current, options);
+
+    return () => {
+      if (!typed.current) return;
+
+      typed.current.destroy();
+    };
+  }, []);
+
   return (
     <div className="flex max-w-6xl mx-auto flex-col items-center justify-center py-2 min-h-screen">
       <Header />
       <main className="flex flex-1 w-full flex-col items-center justify-center text-center px-4 sm:mt-20 mt-20 background-gradient">
         <h1 className="mx-auto max-w-4xl font-display text-5xl font-bold tracking-normal text-[#101010] sm:text-7xl">
-          Facilitando como você{" "}
-          <span className="relative whitespace-nowrap text-[#8B63FF]">
-            <span className="relative">Mocka</span>
-          </span>{" "}
-          suas aplicações
+          Facilitando como você <br />
+          <span ref={el}>
+            suas aplicações
+          </span>
         </h1>
         <h2 className="mx-auto mt-12 text-lg text-[#101010] leading-7">
           Você pode criar mocks para suas aplicações, enquanto aguarda a API de
@@ -52,8 +87,13 @@ export default function Home() {
           </h2>
 
           <div className="flex items-center justify-center">
-
-            <Image alt="header text" src="/editor.png" quality={100} width={720} height={62} />
+            <Image
+              alt="header text"
+              src="/editor.png"
+              quality={100}
+              width={720}
+              height={62}
+            />
           </div>
         </section>
       </main>
