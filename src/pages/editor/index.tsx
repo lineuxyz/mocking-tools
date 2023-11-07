@@ -12,6 +12,7 @@ export default function JsonEditor() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessCopy, setIsSuccessCopy] = useState(false);
   const [createdMockData, setCreatedMockData] = useState({} as any);
+  const [isLoading, setIsLoading] = useState(false);
 
   const isValidJson = (jsonString: string) => {
     try {
@@ -38,6 +39,7 @@ export default function JsonEditor() {
       if (!fontEditorData) return;
 
       if (isValidJson(fontEditorData)) {
+        setIsLoading(true);
         const mockData = {
           endpoint: "/",
           method: "GET",
@@ -50,6 +52,8 @@ export default function JsonEditor() {
     } catch (error) {
       setIsSuccess(false);
       setIsError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -67,11 +71,13 @@ export default function JsonEditor() {
 
   return (
     <>
-      <div className="flex justify-between px-16 my-8">
-        <Link href="/" className="text-[#101010] text-2xl font-medium">⬅️ Voltar</Link>
+      <div className="flex justify-between md:px-16 px-4 my-8">
+        <Link href="/" className="text-[#101010] text-2xl font-medium">
+          ⬅️ Voltar
+        </Link>
       </div>
-      <div className="h-full flex justify-between px-16 gap-8 pb-16">
-        <div className="drop-shadow-md flex items-center justify-start w-9/12 py-8 px-8  bg-[#fff] rounded-xl">
+      <div className="h-full flex flex-col md:flex-row justify-between md:px-16 px-4 gap-8 pb-16">
+        <div className="drop-shadow-md flex items-center justify-start md:w-9/12 w-12/12 py-8 px-8  bg-[#fff] rounded-xl">
           <Editor
             height="90vh"
             defaultLanguage="json"
@@ -98,7 +104,7 @@ export default function JsonEditor() {
             }}
           />
         </div>
-        <div className="drop-shadow-md flex flex-col items-start justify-start w-3/12 py-8 px-8 bg-[#fff] rounded-xl gap-4">
+        <div className="drop-shadow-md flex flex-col items-start justify-start order-first md:order-2 md:w-3/12 w-12/12 py-8 px-8 bg-[#fff] rounded-xl gap-4">
           {isSuccess && (
             <div className="flex flex-col w-full bg-[#9DBF9E] text-[#101010] rounded-xl text-white font-medium px-4 py-3">
               Mock criado com sucesso! Use esse link para poder receber seus
@@ -125,10 +131,36 @@ export default function JsonEditor() {
             </div>
           )}
           <button
+            disabled={isLoading}
             onClick={handleSubmit}
-            className="w-full bg-[#8B63FF] rounded-xl text-white font-medium px-4 py-3 hover:bg-[#6749bf] transition"
+            className="w-full bg-[#8B63FF] rounded-xl disabled:bg-[#949494] text-white font-medium px-4 py-3 hover:bg-[#6749bf] transition"
           >
-            Criar meu mock 😊
+            {isLoading ? (
+              <div className="w-full flex items-center justify-center">
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              </div>
+            ) : (
+              "Criar meu mock 😊"
+            )}
           </button>
           <div className="w-full flex flex-col">
             <label htmlFor="font-size">Tamanho da fonte</label>
